@@ -1,0 +1,84 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Prueba conversión coordenadas</title>
+</head>
+
+<body>
+    <script src="dist/proj4.js"></script>
+
+    <h1>Coordenadas en WGS84</h1>
+    <label for="lat">LAT:</label>
+    <input type="number" id="lat" name="lat" value="41.3361132145">
+    <label for="lon">LON:</label>
+    <input type="number" id="lon" name="lon" value="2.1423661709">
+
+    <h1>ETRS89 / UTM zone 31N</h1>
+    <label for="x">X:</label>
+    <input type="number" id="x" name="x" value="428238.9899222932">
+    <label for="y">Y:</label>
+    <input type="number" id="y" name="y" value="4576424.650294064">
+    <br>
+
+    <hr>
+    <br>
+    <input type="button" id="wgs84toutm" value="Convertir WGS84 ->  UTM zone 31N">
+    <br> <br>
+    <input type="button" id="utmtowgs84" value="Convertir UTM zone 31N -> WGS84">
+
+
+    <br>
+    <h1>Resultados</h1>
+    <span id="resultado_planas"></span>
+    <br> <br>
+    <span id="resultado_geograficas"></span>
+
+
+    <script>
+        //http://proj4js.org/
+        //Coordinates may an object of the form {x:x,y:y} or an array of the form [x,y].
+        //x,y
+        //lon,lat
+
+        const sourceProj = '+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees';
+        const targetProj = "+proj=utm +zone=31 +ellps=GRS80 +units=m +no_defs";
+
+
+        //lat 41.3361132145
+        //lon 2.1423661709
+        //probar en https://tool-online.com/es/conversion-coordenadas.php
+
+        const btn1 = document.getElementById("wgs84toutm");
+        btn1.addEventListener('click', function(e) {
+
+            let loncoord = document.getElementById("lon").value;
+            let latcoord = document.getElementById("lat").value;
+
+            let coordsEPSG25831 = proj4(sourceProj, targetProj, [parseFloat(loncoord), parseFloat(latcoord)]);
+            let span = document.getElementById("resultado_planas");
+            span.innerHTML = `<b>X:</b> ${coordsEPSG25831[0]} , <b>Y:</b> ${coordsEPSG25831[1]}`;
+
+            console.log(coordsEPSG25831);
+        });
+
+
+        const btn2 = document.getElementById("utmtowgs84");
+        btn2.addEventListener('click', function(e) {
+            let xcoord = document.getElementById("x").value;
+            let ycoord = document.getElementById("y").value;
+
+            let coordsWGS84 = proj4(targetProj, sourceProj, [parseFloat(xcoord), parseFloat(ycoord)]);
+            let span = document.getElementById("resultado_geograficas");
+            span.innerHTML = `<b>LON:</b> ${coordsWGS84[0]} , <b>LAT:</b> ${coordsWGS84[1]}`;
+
+            console.log(coordsWGS84);
+        });
+    </script>
+
+
+
+
+</body>
+
+</html>
